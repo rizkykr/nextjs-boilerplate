@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "./globals.scss";
+import Tailwind from "primereact/passthrough/tailwind";
+import { PrimeReactProvider } from "primereact/api";
+import { NextAuthProvider } from "./providersAuth";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <div className="container mx-auto">
+          <NextAuthProvider>
+            <PrimeReactProvider value={{ unstyled: true, pt: Tailwind }}>
+              {children}
+            </PrimeReactProvider>
+          </NextAuthProvider>
+        </div>
+        <Toaster />
+      </body>
     </html>
   );
 }
