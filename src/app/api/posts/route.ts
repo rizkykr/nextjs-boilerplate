@@ -72,12 +72,22 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
+  const { update } = await useRoleAccess({
+    page: "posts",
+  });
 
   if (!session)
     return Response.json(
       { error: "You must be logged in." },
       {
         status: 401,
+      }
+    );
+  if (!update)
+    return Response.json(
+      { error: "You not allowed" },
+      {
+        status: 403,
       }
     );
 
@@ -101,12 +111,22 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
+  const { delete: deleteCheck } = await useRoleAccess({
+    page: "posts",
+  });
 
   if (!session)
     return Response.json(
       { error: "You must be logged in." },
       {
         status: 401,
+      }
+    );
+  if (!deleteCheck)
+    return Response.json(
+      { error: "You not allowed" },
+      {
+        status: 403,
       }
     );
 

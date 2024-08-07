@@ -10,13 +10,15 @@ import { APIHandler } from "@/function/api";
 import { useRouter } from "next/navigation";
 import { Post } from "@prisma/client";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
+import { ContextMenu } from "primereact/contextmenu";
 
 export default function Home({ data }: { data: any[] }) {
   const rt = useRouter();
+  const cm = useRef<any>(null);
   const { data: session } = useSession();
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [selectedProduct, setSelectedProduct] = useState<any>();
@@ -90,6 +92,7 @@ export default function Home({ data }: { data: any[] }) {
           severity="info"
           aria-label="Edit"
           size="small"
+          onClick={() => rt.push(`/edit/${post.id}`)}
         />
         <Button
           icon="pi pi-times"
@@ -104,7 +107,7 @@ export default function Home({ data }: { data: any[] }) {
     );
   };
   const urlPostToTemplate = (post: Post) => {
-    return <Link href={"/" + post.id}>{post.id}</Link>;
+    return <Link href={"/article/" + post.id}>{post.id}</Link>;
   };
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -124,6 +127,7 @@ export default function Home({ data }: { data: any[] }) {
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Pencarian"
+            className="p-inputtext-sm"
           />
         </IconField>
       </div>
@@ -143,11 +147,26 @@ export default function Home({ data }: { data: any[] }) {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedProduct]);
+
+  const menuModel = [
+    {
+      label: "Edit",
+      icon: "pi pi-fw pi-pencil",
+      command: () => rt.push(`/edit/${selectedProduct.id}`),
+    },
+    {
+      label: "Delete",
+      icon: "pi pi-fw pi-times",
+      command: () => confirmDeletes(selectedProduct),
+    },
+  ];
   return (
     <>
-      <h1 className="text-4xl mt-4">Post Managements</h1>
-      <p>Silahkan manage post anda dibawah ini</p>
-      <div className="flex gap-x-3 my-4 justify-end items-center">
+      <div className="titledetail max-md:px-4">
+        <h1 className="md:text-4xl text-2xl mt-4">Post Managements</h1>
+        <p className="max-sm:text-sm">Silahkan manage post anda dibawah ini</p>
+      </div>
+      <div className="flex gap-x-3 my-4 justify-end items-center hidden">
         <Link href="/add">
           <Button label="Tambah" size="small" severity="success" />
         </Link>
@@ -175,6 +194,7 @@ export default function Home({ data }: { data: any[] }) {
       </div>
       {/* <pre>{JSON.stringify(selectedProduct, undefined, 2)}</pre> */}
       <DataTable
+        size="small"
         className="mt-10"
         showGridlines
         paginator
@@ -193,6 +213,10 @@ export default function Home({ data }: { data: any[] }) {
         selectionMode="single"
         selection={selectedProduct}
         onSelectionChange={(e) => setSelectedProduct(e.value)}
+        onContextMenu={(e) => cm.current.show(e.originalEvent)}
+        contextMenuSelection={selectedProduct}
+        onContextMenuSelectionChange={(e) => setSelectedProduct(e.value)}
+        pageLinkSize={3}
       >
         <Column
           body={urlPostToTemplate}
@@ -217,6 +241,11 @@ export default function Home({ data }: { data: any[] }) {
         ></Column>
         <Column header="Action" body={actionTemplate}></Column>
       </DataTable>
+      <ContextMenu
+        model={menuModel}
+        ref={cm}
+        onHide={() => setSelectedProduct(null)}
+      />
       <ConfirmDialog />
     </>
   );

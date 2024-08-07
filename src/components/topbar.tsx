@@ -11,9 +11,7 @@ export default function Topbar() {
   const [menu, setMenu] = useState<any[]>();
   useEffect(() => {
     setIsClient(true);
-    if (session?.user.id) {
-      console.log(session.user.role);
-
+    if (session?.user.id)
       setMenu([
         {
           label: "Beranda",
@@ -38,10 +36,9 @@ export default function Topbar() {
           },
         },
       ]);
-    }
   }, [session]);
   return (
-    <div className="mt-4 mb-8">
+    <div className="md:mt-4 max-md:rounded-none mb-8">
       {!isClient && !session?.user.id ? (
         <Skeleton className="mb-2" height="2rem"></Skeleton>
       ) : (

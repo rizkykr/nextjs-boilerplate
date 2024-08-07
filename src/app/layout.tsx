@@ -22,7 +22,7 @@ export default function RootLayout({
   };
   return (
     <html lang="en">
-      <body>
+      <body className="bg-slate-50 dark:bg-slate-950 dark:text-white">
         <div className="container mx-auto">
           <NextAuthProvider>
             <PrimeReactProvider value={value}>
