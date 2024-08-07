@@ -1,11 +1,16 @@
 import { authOptions } from "@/function/authOptions";
+import { useRoleAccess } from "@/function/rolesServers";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
   const session = await getServerSession(authOptions);
+  const { read } = await useRoleAccess({
+    page: "posts",
+  });
 
   if (!session)
     return Response.json(
@@ -15,11 +20,39 @@ export async function GET() {
       }
     );
 
+  if (!read)
+    return Response.json(
+      { error: "You not allowed" },
+      {
+        status: 403,
+      }
+    );
+
   const data = await prisma.post.findMany();
   return Response.json({ data });
 }
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  const { create } = await useRoleAccess({
+    page: "posts",
+  });
+
+  if (!session)
+    return Response.json(
+      { error: "You must be logged in." },
+      {
+        status: 401,
+      }
+    );
+  if (!create)
+    return Response.json(
+      { error: "You not allowed" },
+      {
+        status: 403,
+      }
+    );
+
   const formData = await request.formData();
   const name = formData.get("title") as string;
   const email = formData.get("content") as string;
@@ -33,10 +66,21 @@ export async function POST(request: Request) {
       authorId: aId,
     },
   });
+  if (posts.id) revalidatePath("/");
   return Response.json(posts);
 }
 
 export async function PUT(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session)
+    return Response.json(
+      { error: "You must be logged in." },
+      {
+        status: 401,
+      }
+    );
+
   const formData = await request.formData();
   const id = formData.get("id") as string;
   const ttl = formData.get("title") as string;
@@ -56,6 +100,16 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session)
+    return Response.json(
+      { error: "You must be logged in." },
+      {
+        status: 401,
+      }
+    );
+
   const formData = await request.formData();
   const id = formData.get("id") as string;
 

@@ -15,6 +15,7 @@ declare module "next-auth" {
       image: any;
       name: any;
       email: any;
+      role: any;
     };
   }
 
@@ -23,5 +24,6 @@ declare module "next-auth" {
     image: any;
     name: any;
     email: any;
+    role: any;
   }
 }

@@ -4,6 +4,7 @@ import Tailwind from "primereact/passthrough/tailwind";
 import { PrimeReactProvider } from "primereact/api";
 import { NextAuthProvider } from "./providersAuth";
 import { Toaster } from "react-hot-toast";
+import { Ripple } from "primereact/ripple";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,17 +16,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const value = {
+    ripple: true,
+    pt: Tailwind,
+  };
   return (
     <html lang="en">
       <body>
         <div className="container mx-auto">
           <NextAuthProvider>
-            <PrimeReactProvider value={{ unstyled: true, pt: Tailwind }}>
+            <PrimeReactProvider value={value}>
               {children}
+              <Toaster />
             </PrimeReactProvider>
           </NextAuthProvider>
         </div>
-        <Toaster />
       </body>
     </html>
   );

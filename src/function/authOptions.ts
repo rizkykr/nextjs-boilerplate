@@ -8,6 +8,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/login",
+  },
   events: {
     async signOut(message) {
       cookies().delete("rememberMe");
@@ -34,14 +38,16 @@ export const authOptions: NextAuthOptions = {
             },
           })
           .then((v: any) => {
+            if (v == null) throw new Error("User atau Password Salah");
             return {
               ...v,
               image:
                 "https://api.dicebear.com/9.x/adventurer/png?seed=" + v.name,
             };
           })
-          .catch(() => {
-            return null;
+          .catch((err) => {
+            console.log(err);
+            throw new Error(err);
           });
       },
     }),
@@ -53,6 +59,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.image;
+        session.user.role = token.role;
       }
       return session;
     },
@@ -62,6 +69,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.image = user.image;
+        token.role = user.role;
       }
       return token;
     },

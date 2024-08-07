@@ -4,16 +4,27 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import Link from "next/link";
-import { fakePostComplete, fakeUserComplete } from "../../types/fake-data";
+import { fakePostComplete, fakeUserComplete } from "../../../types/fake-data";
 import toast from "react-hot-toast";
 import { APIHandler } from "@/function/api";
 import { useRouter } from "next/navigation";
 import { Post } from "@prisma/client";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { useEffect, useState } from "react";
+import { FilterMatchMode } from "primereact/api";
+import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
 
 export default function Home({ data }: { data: any[] }) {
   const rt = useRouter();
   const { data: session } = useSession();
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+  const [selectedProduct, setSelectedProduct] = useState<any>();
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    title: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
   async function postFakeData() {
     const dt = fakePostComplete();
     if (dt && session?.user) {
@@ -49,6 +60,7 @@ export default function Home({ data }: { data: any[] }) {
       type: "form",
     })
       .then(() => {
+        setSelectedProduct("");
         toast.success("sukses menghapus data");
         rt.refresh();
       })
@@ -91,6 +103,46 @@ export default function Home({ data }: { data: any[] }) {
       </>
     );
   };
+  const urlPostToTemplate = (post: Post) => {
+    return <Link href={"/" + post.id}>{post.id}</Link>;
+  };
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    // @ts-ignore
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-end">
+        <IconField iconPosition="left">
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Pencarian"
+          />
+        </IconField>
+      </div>
+    );
+  };
+  const header = renderHeader();
+
+  //Handle Delete Button
+  useEffect(() => {
+    if (!selectedProduct?.id) return;
+    function handleKeyDown(e: any) {
+      if (e.keyCode == 46 && selectedProduct?.id)
+        confirmDeletes(selectedProduct);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedProduct]);
   return (
     <>
       <h1 className="text-4xl mt-4">Post Managements</h1>
@@ -121,17 +173,48 @@ export default function Home({ data }: { data: any[] }) {
           onClick={() => console.log(fakeUserComplete())}
         />
       </div>
+      {/* <pre>{JSON.stringify(selectedProduct, undefined, 2)}</pre> */}
       <DataTable
+        className="mt-10"
         showGridlines
         paginator
         rows={5}
         rowsPerPageOptions={[5, 10, 25, 50]}
         value={data}
         tableStyle={{ minWidth: "50rem" }}
+        sortMode="multiple"
+        removableSort
+        dataKey="id"
+        filters={filters}
+        filterDisplay="row"
+        header={header}
+        globalFilterFields={["id", "title", "content"]}
+        emptyMessage="Artikel tidak ditemukan."
+        selectionMode="single"
+        selection={selectedProduct}
+        onSelectionChange={(e) => setSelectedProduct(e.value)}
       >
-        <Column field="id" header="ID"></Column>
-        <Column field="title" header="Title"></Column>
-        <Column field="content" header="Content"></Column>
+        <Column
+          body={urlPostToTemplate}
+          filter
+          filterPlaceholder="Cari ID"
+          sortable
+          header="ID"
+        ></Column>
+        <Column
+          field="title"
+          filter
+          filterPlaceholder="Cari Judul"
+          sortable
+          header="Title"
+        ></Column>
+        <Column
+          field="content"
+          filter
+          filterPlaceholder="Cari Content"
+          sortable
+          header="Content"
+        ></Column>
         <Column header="Action" body={actionTemplate}></Column>
       </DataTable>
       <ConfirmDialog />

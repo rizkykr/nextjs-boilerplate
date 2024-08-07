@@ -8,6 +8,6 @@ const config: Config = {
     "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {},
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };
 export default config;

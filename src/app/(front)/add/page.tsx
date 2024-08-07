@@ -9,7 +9,7 @@ import { InputText } from "primereact/inputtext";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function page() {
+export default function Page() {
   const rt = useRouter();
   const { data: session } = useSession();
   const [titlePost, setTitlePost] = useState<string>("");

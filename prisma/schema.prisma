@@ -23,14 +23,15 @@ model User {
   email    String  @unique
   name     String?
   password String?
+  role     String? @default("user")
   posts    Post[]
 }
 
 model Post {
   id          String   @id @default(cuid())
   title       String
-  content     String?
-  description String?
+  content     String?  @db.LongText
+  description String?  @db.Text
   published   Int      @default(0)
   author      User     @relation(fields: [authorId], references: [id])
   authorId    String
