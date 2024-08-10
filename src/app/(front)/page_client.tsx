@@ -15,6 +15,7 @@ import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { ContextMenu } from "primereact/contextmenu";
+import { Dialog } from "primereact/dialog";
 
 export default function Home({ data }: { data: any[] }) {
   const rt = useRouter();
@@ -192,7 +193,6 @@ export default function Home({ data }: { data: any[] }) {
           onClick={() => console.log(fakeUserComplete())}
         />
       </div>
-      {/* <pre>{JSON.stringify(selectedProduct, undefined, 2)}</pre> */}
       <DataTable
         size="small"
         className="mt-10"
@@ -247,6 +247,16 @@ export default function Home({ data }: { data: any[] }) {
         onHide={() => setSelectedProduct(null)}
       />
       <ConfirmDialog />
+      <Dialog
+        header="Header"
+        visible={selectedProduct != null}
+        style={{ width: "50vw" }}
+        onHide={() => setSelectedProduct(null)}
+      >
+        <p className="m-0">
+          <pre>{JSON.stringify(selectedProduct, undefined, 2)}</pre>
+        </p>
+      </Dialog>
     </>
   );
 }
