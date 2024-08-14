@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.scss";
+import "./goodash.scss";
 import Tailwind from "primereact/passthrough/tailwind";
 import { PrimeReactProvider } from "primereact/api";
 import { NextAuthProvider } from "./providersAuth";
@@ -22,15 +22,16 @@ export default function RootLayout({
   };
   return (
     <html lang="en">
-      <body className="bg-slate-50 dark:bg-slate-950 dark:text-white">
-        <div className="container mx-auto">
-          <NextAuthProvider>
-            <PrimeReactProvider value={value}>
-              {children}
-              <Toaster />
-            </PrimeReactProvider>
-          </NextAuthProvider>
-        </div>
+      <body
+        id="body-layout"
+        className="text-body-md relative font-sans font-normal text-gray-700 dark:text-gray-300 bg-surface-500 dark:bg-surfacedark-500 show"
+      >
+        <NextAuthProvider>
+          <PrimeReactProvider value={value}>
+            {children}
+            <Toaster />
+          </PrimeReactProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

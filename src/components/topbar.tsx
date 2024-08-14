@@ -36,7 +36,7 @@ export default function Topbar() {
           },
         },
       ]);
-  }, [session]);
+  }, [session, routeTo]);
   return (
     <div className="md:mt-4 max-md:rounded-none mb-8">
       {!isClient && !session?.user.id ? (
