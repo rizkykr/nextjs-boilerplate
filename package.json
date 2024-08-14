@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "5.17.0",
     "@types/lodash": "^4.17.7",
     "axios": "^1.7.3",
     "destr": "^2.0.3",

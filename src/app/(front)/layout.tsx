@@ -7,7 +7,7 @@ export default function HootLayout({
 }>) {
   return (
     <>
-      <Topbar />
+      {/* <Topbar /> */}
       {children}
     </>
   );

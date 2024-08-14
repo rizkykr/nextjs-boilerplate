@@ -17,7 +17,7 @@ import { IconField } from "primereact/iconfield";
 import { ContextMenu } from "primereact/contextmenu";
 import { Dialog } from "primereact/dialog";
 
-export default function Home({ data }: { data: any[] }) {
+export default function Home({ data, hdr }: { data: any[]; hdr: any }) {
   const rt = useRouter();
   const cm = useRef<any>(null);
   const { data: session } = useSession();
@@ -38,10 +38,11 @@ export default function Home({ data }: { data: any[] }) {
       };
       await APIHandler({
         name: "postFake",
-        url: "api/posts",
+        url: "/api/posts",
         method: "POST",
         data: dataPost,
         type: "form",
+        headers: hdr,
       })
         .then(() => {
           toast.success("sukses menambahkan data");
@@ -167,7 +168,7 @@ export default function Home({ data }: { data: any[] }) {
         <h1 className="md:text-4xl text-2xl mt-4">Post Managements</h1>
         <p className="max-sm:text-sm">Silahkan manage post anda dibawah ini</p>
       </div>
-      <div className="flex gap-x-3 my-4 justify-end items-center hidden">
+      <div className="flex gap-x-3 my-4 justify-end items-center">
         <Link href="/add">
           <Button label="Tambah" size="small" severity="success" />
         </Link>

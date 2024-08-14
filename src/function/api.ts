@@ -8,6 +8,7 @@ interface api {
   token?: string;
   type?: string;
   blobMode?: boolean;
+  headers?: any;
 }
 
 export const APIHandler = async ({
@@ -18,6 +19,7 @@ export const APIHandler = async ({
   token = "",
   type = "json",
   blobMode = false,
+  headers,
 }: api) => {
   // const ftchConfig = {
   //   method: method,
@@ -27,17 +29,22 @@ export const APIHandler = async ({
   //   },
   //   next: { tags: [name || url] },
   // };
+  const urls = process.env.NEXT_PUBLIC_API_ENDPOINT + url;
+
   var config: AxiosRequestConfig = {
     withCredentials: true,
     method: method,
     maxBodyLength: Infinity,
-    url: "/" + url,
+    url: urls,
     data: data,
     headers: {
-      Accept: "application/json",
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-      Expires: "0",
+      ...{
+        Accept: "application/json",
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+      ...headers,
     },
   };
 
@@ -59,6 +66,7 @@ export const APIHandler = async ({
         form_data.append(key, data[key]);
       }
       config.data = form_data;
+      console.log(form_data);
     }
 
     const apnd = {
@@ -76,12 +84,13 @@ export const APIHandler = async ({
     config.responseType = "blob";
   }
 
-  return await axios
+  const bee = await axios
     .request(config)
     .then((response: any) => {
       return response.data;
     })
     .catch((e: any) => {
-      return e.response;
+      return e.response.data;
     });
+  return bee;
 };
