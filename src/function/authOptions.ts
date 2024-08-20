@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import { cookies as Cookiese } from "next/headers";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -40,6 +41,16 @@ export const authOptions: NextAuthOptions = {
     signIn(message) {
       console.log(message);
       console.log(Cookiese().getAll());
+    },
+  },
+  jwt: {
+    async encode({ secret, token }) {
+      const tokenni = jwt.sign(token || "", secret) as any;
+      console.log(tokenni);
+      return tokenni;
+    },
+    async decode({ secret, token }) {
+      return jwt.verify(token || "", secret) as any;
     },
   },
   providers: [
