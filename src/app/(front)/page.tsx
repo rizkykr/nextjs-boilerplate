@@ -12,11 +12,12 @@ async function loadData(hdr: any) {
 
 export default async function Page() {
   const hdr = Object.fromEntries(headers());
+  const ck: string = headers().get("Cookie") || "";
   const dataPost: any = await loadData(hdr);
   return (
     <>
-      <pre>{JSON.stringify(dataPost, undefined, 2)}</pre>
-      <PageClient data={dataPost.data} hdr={hdr} />
+      {/* <pre>{JSON.stringify(dataPost, undefined, 2)}</pre> */}
+      <PageClient data={dataPost.data} hdr={hdr} cookie={ck} />
     </>
   );
 }

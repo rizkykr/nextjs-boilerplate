@@ -34,59 +34,64 @@ export default function Form({ action }: Props) {
   const titleErrors = findErrors("title", state.errors);
   const contentErrors = findErrors("content", state.errors);
   return (
-    <form action={formAction}>
-      <div className="titledetail max-md:px-4">
-        <h1 className="md:text-4xl text-2xl mt-4">Post Add</h1>
-        <p className="max-sm:text-sm">Silahkan ketikan post anda dibawah ini</p>
-        <div className="flex gap-x-3 my-4 justify-end items-center">
-          <Button
-            label="Simpan"
-            size="small"
-            type="submit"
-            severity="success"
-          />
+    <>
+      <form action={formAction}>
+        <div className="flex flex-row justify-between items-center py-2">
+          <h2 className="text-title-lg">Add Posts</h2>
+          {/* add new */}
+          <div className="justify-end flex items-center gap-2">
+            <button
+              type="submit"
+              className="btn relative flex flex-row items-center justify-center gap-x-2 py-2 px-4 rounded-[6.25rem] hover:shadow-md text-sm tracking-[.00714em] font-medium bg-primary-600 text-white dark:bg-primary-200 dark:text-primary-800"
+            >
+              <span className="material-symbols-outlined">add</span>
+              Simpan
+            </button>
+            <Link
+              href="/"
+              className="btn-tonal relative inline-flex flex-row items-center justify-center gap-x-2 py-2.5 px-6 rounded-[6.25rem] text-sm tracking-[.00714em] font-medium hover:shadow bg-secondary-100 text-primary-900 dark:bg-secondary-700 dark:text-secondary-100"
+            >
+              Cancel
+            </Link>
+          </div>
+        </div>
 
-          <Link href="/">
-            <Button label="Batal" size="small" severity="secondary" />
-          </Link>
+        <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="titlepost">Title Post</label>
+            <InputText
+              id="titlepost"
+              aria-describedby="titlepost-help"
+              name="title"
+            />
+            {ErrorMessages({ errors: titleErrors }) != null ? (
+              <small id="titlepost-help" className="text-red-600">
+                {ErrorMessages({ errors: titleErrors })}
+              </small>
+            ) : (
+              ""
+            )}
+          </div>
+          <InputText value={text} type="hidden" name="content" />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="contentpost">Content Post</label>
+            <Editor
+              style={{ height: "320px" }}
+              id="contentpost"
+              aria-describedby="content-help"
+              value={text}
+              onTextChange={(e) => setText(e.htmlValue || "")}
+            />
+            {ErrorMessages({ errors: contentErrors }) != null ? (
+              <small id="content-help" className="text-red-600">
+                {ErrorMessages({ errors: contentErrors })}
+              </small>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="titlepost">Title Post</label>
-          <InputText
-            id="titlepost"
-            aria-describedby="titlepost-help"
-            name="title"
-          />
-          {ErrorMessages({ errors: titleErrors }) != null ? (
-            <small id="titlepost-help" className="text-red-600">
-              {ErrorMessages({ errors: titleErrors })}
-            </small>
-          ) : (
-            ""
-          )}
-        </div>
-        <InputText value={text} type="hidden" name="content" />
-        <div className="flex flex-col gap-2">
-          <label htmlFor="contentpost">Content Post</label>
-          <Editor
-            style={{ height: "320px" }}
-            id="contentpost"
-            aria-describedby="content-help"
-            value={text}
-            onTextChange={(e) => setText(e.htmlValue || "")}
-          />
-          {ErrorMessages({ errors: contentErrors }) != null ? (
-            <small id="content-help" className="text-red-600">
-              {ErrorMessages({ errors: contentErrors })}
-            </small>
-          ) : (
-            ""
-          )}
-        </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

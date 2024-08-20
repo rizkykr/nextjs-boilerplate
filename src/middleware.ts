@@ -4,16 +4,10 @@ import { doesRoleHaveAccessToURL } from "./function/roles";
 
 export default withAuth(function middleware(req) {
   // Redirect to login page if there is no accessible token
-  if (!req.nextauth.token) {
-    return NextResponse.redirect("/auth/login");
-  }
-
+  if (!req.nextauth.token) return NextResponse.redirect("/auth/login");
   const role = req.nextauth.token.role as string;
   const chk = doesRoleHaveAccessToURL(role, req.nextUrl.pathname);
-
   if (!chk) return NextResponse.error();
-
-  // Allow
 });
 
 export const config = {

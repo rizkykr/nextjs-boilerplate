@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
+import { cookies as Cookiese } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -35,6 +36,12 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login",
   },
   cookies,
+  events: {
+    signIn(message) {
+      console.log(message);
+      console.log(Cookiese().getAll());
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",

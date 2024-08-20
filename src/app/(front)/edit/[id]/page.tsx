@@ -1,21 +1,24 @@
+import { APIHandler } from "@/function/api";
 import EditPage from "./page_client";
-import { Post, PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Post } from "@prisma/client";
+import { headers } from "next/headers";
 
 type Props = {
   params: { id: string };
 };
 
-async function FetchDataPost(id: string) {
-  return await prisma.post.findUnique({
-    where: {
-      id,
-    },
+async function loadData(hdr: any, id: string) {
+  return APIHandler({
+    name: "getPostsbyID",
+    url: "/api/posts/" + id,
+    headers: hdr,
   });
 }
 
 export default async function Page({ params }: Props) {
-  const data = (await FetchDataPost(params.id)) as Post;
+  const hdr = Object.fromEntries(headers());
+  const data = (await loadData(hdr, params.id)).data as Post;
+
+  // const data = (await FetchDataPost(params.id)) as Post;
   return <EditPage data={data} />;
 }

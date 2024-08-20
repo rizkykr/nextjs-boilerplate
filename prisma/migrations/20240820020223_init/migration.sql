@@ -4,6 +4,7 @@ CREATE TABLE `User` (
     `email` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
     `password` VARCHAR(191) NULL,
+    `role` VARCHAR(191) NULL DEFAULT 'user',
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -13,8 +14,8 @@ CREATE TABLE `User` (
 CREATE TABLE `Post` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NULL,
-    `description` VARCHAR(191) NULL,
+    `content` LONGTEXT NULL,
+    `description` TEXT NULL,
     `published` INTEGER NOT NULL DEFAULT 0,
     `authorId` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

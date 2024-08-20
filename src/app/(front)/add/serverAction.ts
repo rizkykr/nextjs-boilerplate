@@ -3,7 +3,6 @@ import { authOptions } from "@/function/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { APIHandler } from "@/function/api";
 import { headers } from "next/headers";
 
 const schema = z.object({
@@ -20,22 +19,19 @@ export default async function PostAction(_prevState: any, params: FormData) {
   });
 
   if (validation.success) {
-    const dt = {
-      title: params.get("title") as string,
-      content: params.get("content") as string,
-      authorId: session?.user.id,
-    };
-    console.log(dt);
-
-    const bee = await APIHandler({
-      name: "PostsArticle",
-      url: "/api/posts",
-      method: "POST",
-      headers: Object.fromEntries(headers()),
-      data: dt,
-      type: "form",
-    });
-    console.log(bee);
+    params.append("authorId", session?.user.id);
+    const ck: string = headers().get("Cookie") || "";
+    const bee = await fetch(
+      process.env.NEXT_PUBLIC_API_ENDPOINT + "/api/posts",
+      {
+        method: "POST",
+        body: params,
+        headers: {
+          Cookie: ck,
+        },
+      }
+    );
+    console.log(ck);
 
     redirect("/");
   } else {
